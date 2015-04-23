@@ -28,18 +28,24 @@ public class MyActivity extends Activity {
         setContentView(R.layout.activity_my);
 
         GetTextFields();
-        // Get button from the layout resource, and attach an event to it
         Button btnCalculateTip = (Button) findViewById(R.id.btnCalculate);
+        Button btnClear = (Button) findViewById(R.id.btnClear);
         mealTotalField = (TextView) findViewById(R.id.mealTotalInput);
 
         // TODO
         // stop you putting in three or more decimal places, use Currency Formatter on text field
-        // do the calculation when you hit done on the keyboard
         // recalculate after screen rotation
+        // do the calculation when you hit done on the keyboard
 
         btnCalculateTip.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 CheckIfTotalIsEmpty(mealTotalField.getText().toString());
+            }
+        });
+
+        btnClear.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                ClearAllFields();
             }
         });
     }
@@ -64,20 +70,15 @@ public class MyActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.my, menu);
+        getMenuInflater().inflate(R.menu.my, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // Handle action bar item clicks here.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
     private void CalculateTip(double mealTotal)
