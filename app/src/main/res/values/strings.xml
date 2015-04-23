@@ -4,9 +4,11 @@
     <string name="app_name">TipThis</string>
     <string name="action_settings">Settings</string>
     <string name="calculate">Calculate tip</string>
+    <string name="clear">Clear</string>
     <string name="total_hint">Enter amount, press Calculate</string>
     <string name="label15percent">15%</string>
     <string name="label20percent">20%</string>
     <string name="label25percent">25%</string>
+    <string name="action_about">© 2015 Alison Hawke</string>
 
 </resources>
