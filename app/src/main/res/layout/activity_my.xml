@@ -23,14 +23,16 @@
             <TextView
                 android:id="@+id/txt15percenttip"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:text="@string/label15percent" />
             <TextView
                 android:id="@+id/txt15percenttotal"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:gravity="end" />
@@ -42,14 +44,16 @@
             <TextView
                 android:id="@+id/txt20percenttip"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:text="@string/label20percent" />
             <TextView
                 android:id="@+id/txt20percenttotal"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:gravity="end" />
@@ -61,14 +65,16 @@
             <TextView
                 android:id="@+id/txt25percenttip"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:text="@string/label25percent" />
             <TextView
                 android:id="@+id/txt25percenttotal"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:gravity="end" />
