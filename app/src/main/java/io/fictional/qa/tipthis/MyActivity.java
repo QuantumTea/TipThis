@@ -53,11 +53,11 @@ public class MyActivity extends Activity {
     private void ClearAllFields() {
         mealTotalField.setText("");
         tipAmount15percent.setText("15%");
-        totalWith15Percent.setText("");
+        totalWith15Percent.setText(" ");
         tipAmount20percent.setText("20%");
-        totalWith20Percent.setText("");
+        totalWith20Percent.setText(" ");
         tipAmount25percent.setText("25%");
-        totalWith25Percent.setText("");
+        totalWith25Percent.setText(" ");
     }
 
     private void CheckIfTotalIsEmpty(String mealTotalString) {
