@@ -107,4 +107,8 @@
                 android:text="@string/clear" />
         </TableRow>
     </TableLayout>
+<<<<<<< HEAD
 </LinearLayout>
+=======
+</LinearLayout>
+>>>>>>> 7ec4fcde2d1ec6d4960acb1c2d6ff1654e94aa40
