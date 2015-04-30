@@ -25,6 +25,7 @@ public class MyActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_my);
 
         GetTextFields();
@@ -48,6 +49,20 @@ public class MyActivity extends Activity {
                 ClearAllFields();
             }
         });
+
+        // Check whether we're recreating a previously destroyed instance
+        if (savedInstanceState != null) {
+            // Restore value of members from saved state
+            CheckIfTotalIsEmpty(savedInstanceState.getString(savedMealTotalString));
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the current state
+        savedInstanceState.putString(savedMealTotalString, mealTotalField.getText().toString());
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     private void ClearAllFields() {
@@ -78,9 +93,8 @@ public class MyActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here.
         int id = item.getItemId();
-
-        return id == R.id.action_settings || super.onOptionsItemSelected(item);
-
+        return id == R.id.action_about || super.onOptionsItemSelected(item);
+    }
 
     private void CalculateTip(double mealTotal)
     {
