@@ -2,6 +2,8 @@ package io.fictional.qa.tipthis;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,7 +37,6 @@ public class MyActivity extends Activity {
 
         // TODO
         // stop you putting in three or more decimal places, use Currency Formatter on text field
-        // recalculate after screen rotation
         // do the calculation when you hit done on the keyboard
 
         btnCalculateTip.setOnClickListener(new OnClickListener() {
@@ -50,11 +51,28 @@ public class MyActivity extends Activity {
             }
         });
 
-        // Check whether we're recreating a previously destroyed instance
-        if (savedInstanceState != null) {
-            // Restore value of members from saved state
-            CheckIfTotalIsEmpty(savedInstanceState.getString(savedMealTotalString));
-        }
+        mealTotalField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // do nothing
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //do nothing
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                CheckIfTotalIsEmpty(mealTotalField.getText().toString());
+            }
+        });
+
+        // Check if recreating a previously destroyed instance
+        // rendered unnecessary because of the textWatcher on the edit field
+//        if (savedInstanceState != null) {
+//            CheckIfTotalIsEmpty(savedInstanceState.getString(savedMealTotalString));
+//        }
     }
 
     @Override
