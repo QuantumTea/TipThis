@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.view.View.OnClickListener;
 
 import java.text.NumberFormat;
+import java.text.DecimalFormat;
 import java.util.Locale;
 
 public class MyActivity extends Activity {
@@ -23,6 +24,7 @@ public class MyActivity extends Activity {
     private TextView mealTotalField;
 
     NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.getDefault());
+    DecimalFormat twoDecimalPlaces = new DecimalFormat("#.00");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,15 +66,22 @@ public class MyActivity extends Activity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                CheckIfTotalIsEmpty(mealTotalField.getText().toString());
+                String total = mealTotalField.getText().toString();
+
+                if (!total.isEmpty()) {
+                    CheckIfTotalIsEmpty(total);
+                }
+                else {
+                    ClearAllFields();
+                }
             }
         });
 
         // Check if recreating a previously destroyed instance
-        // rendered unnecessary because of the textWatcher on the edit field
-//        if (savedInstanceState != null) {
-//            CheckIfTotalIsEmpty(savedInstanceState.getString(savedMealTotalString));
-//        }
+        // rendered unnecessary because of the TextWatcher on the edit field
+        if (savedInstanceState != null) {
+            CheckIfTotalIsEmpty(savedInstanceState.getString(savedMealTotalString));
+        }
     }
 
     @Override
