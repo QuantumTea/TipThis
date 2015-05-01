@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,11 +21,13 @@ public class MyActivity extends Activity {
     private TextView tipAmount15percent, totalWith15Percent;
     private TextView tipAmount20percent, totalWith20Percent;
     private TextView tipAmount25percent, totalWith25Percent;
-    private String savedMealTotalString;
+    private String savedMealTotalString ="";
+    private String wasThisClearedYet = "";
+    private boolean alreadyCleared = true;
     private TextView mealTotalField;
 
     NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.getDefault());
-    DecimalFormat twoDecimalPlaces = new DecimalFormat("#.00");
+    //DecimalFormat twoDecimalPlaces = new DecimalFormat("#.00");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +41,8 @@ public class MyActivity extends Activity {
         mealTotalField = (TextView) findViewById(R.id.mealTotalInput);
 
         // TODO
+        // call the clear method when the text field is empty without an infinite loop
         // stop you putting in three or more decimal places, use Currency Formatter on text field
-        // do the calculation when you hit done on the keyboard
 
         btnCalculateTip.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
@@ -66,20 +69,13 @@ public class MyActivity extends Activity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                String total = mealTotalField.getText().toString();
-
-                if (!total.isEmpty()) {
-                    CheckIfTotalIsEmpty(total);
-                }
-                else {
-                    ClearAllFields();
-                }
+                CheckIfTotalIsEmpty(mealTotalField.getText().toString());
             }
         });
 
         // Check if recreating a previously destroyed instance
-        // rendered unnecessary because of the TextWatcher on the edit field
         if (savedInstanceState != null) {
+            alreadyCleared = savedInstanceState.getBoolean(wasThisClearedYet);
             CheckIfTotalIsEmpty(savedInstanceState.getString(savedMealTotalString));
         }
     }
@@ -88,25 +84,41 @@ public class MyActivity extends Activity {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the current state
         savedInstanceState.putString(savedMealTotalString, mealTotalField.getText().toString());
+        savedInstanceState.putBoolean(wasThisClearedYet, alreadyCleared);
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
     }
 
     private void ClearAllFields() {
-        mealTotalField.setText("");
-        tipAmount15percent.setText("15%");
-        totalWith15Percent.setText(" ");
-        tipAmount20percent.setText("20%");
-        totalWith20Percent.setText(" ");
-        tipAmount25percent.setText("25%");
-        totalWith25Percent.setText(" ");
+        if (!alreadyCleared)
+        {
+            mealTotalField.setText("");
+            tipAmount15percent.setText("15%");
+            totalWith15Percent.setText(" ");
+            tipAmount20percent.setText("20%");
+            totalWith20Percent.setText(" ");
+            tipAmount25percent.setText("25%");
+            totalWith25Percent.setText(" ");
+            alreadyCleared = true;
+        }
     }
 
     private void CheckIfTotalIsEmpty(String mealTotalString) {
         if (!mealTotalString.isEmpty())
         {
             CalculateTip(Double.parseDouble(mealTotalString));
+            alreadyCleared = false;
         }
+ /*       if (mealTotalString.isEmpty()) {
+            Log.d("EMPTY", "Nil, nothing, no points");
+            // goes into an infinite loop spitting out log statements when you try ot delete the last character
+            // ClearAllFields();
+        }
+        else
+        {
+            CalculateTip(Double.parseDouble(mealTotalString));
+            alreadyCleared = false;
+        }*/
     }
 
     @Override
