@@ -21,13 +21,11 @@ public class MyActivity extends Activity {
     private TextView tipAmount15percent, totalWith15Percent;
     private TextView tipAmount20percent, totalWith20Percent;
     private TextView tipAmount25percent, totalWith25Percent;
+    private TextView tipAmount30percent, totalWith30Percent;
     private String savedMealTotalString ="";
-    private String wasThisClearedYet = "";
-    private boolean alreadyCleared = true;
     private TextView mealTotalField;
 
     NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.getDefault());
-    //DecimalFormat twoDecimalPlaces = new DecimalFormat("#.00");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,25 +34,10 @@ public class MyActivity extends Activity {
         setContentView(R.layout.activity_my);
 
         GetTextFields();
-        Button btnCalculateTip = (Button) findViewById(R.id.btnCalculate);
-        Button btnClear = (Button) findViewById(R.id.btnClear);
         mealTotalField = (TextView) findViewById(R.id.mealTotalInput);
 
         // TODO
-        // call the clear method when the text field is empty without an infinite loop
         // stop you putting in three or more decimal places, use Currency Formatter on text field
-
-        btnCalculateTip.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                CheckIfTotalIsEmpty(mealTotalField.getText().toString());
-            }
-        });
-
-        btnClear.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                ClearAllFields();
-            }
-        });
 
         mealTotalField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -75,7 +58,6 @@ public class MyActivity extends Activity {
 
         // Check if recreating a previously destroyed instance
         if (savedInstanceState != null) {
-            alreadyCleared = savedInstanceState.getBoolean(wasThisClearedYet);
             CheckIfTotalIsEmpty(savedInstanceState.getString(savedMealTotalString));
         }
     }
@@ -84,41 +66,28 @@ public class MyActivity extends Activity {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the current state
         savedInstanceState.putString(savedMealTotalString, mealTotalField.getText().toString());
-        savedInstanceState.putBoolean(wasThisClearedYet, alreadyCleared);
-        // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
     }
 
     private void ClearAllFields() {
-        if (!alreadyCleared)
-        {
-            mealTotalField.setText("");
-            tipAmount15percent.setText("15%");
-            totalWith15Percent.setText(" ");
-            tipAmount20percent.setText("20%");
-            totalWith20Percent.setText(" ");
-            tipAmount25percent.setText("25%");
-            totalWith25Percent.setText(" ");
-            alreadyCleared = true;
-        }
+        tipAmount15percent.setText("15%");
+        totalWith15Percent.setText(" ");
+        tipAmount20percent.setText("20%");
+        totalWith20Percent.setText(" ");
+        tipAmount25percent.setText("25%");
+        totalWith25Percent.setText(" ");
+        tipAmount30percent.setText("30%");
+        totalWith30Percent.setText(" ");
     }
 
     private void CheckIfTotalIsEmpty(String mealTotalString) {
         if (!mealTotalString.isEmpty())
         {
             CalculateTip(Double.parseDouble(mealTotalString));
-            alreadyCleared = false;
         }
- /*       if (mealTotalString.isEmpty()) {
-            Log.d("EMPTY", "Nil, nothing, no points");
-            // goes into an infinite loop spitting out log statements when you try ot delete the last character
-            // ClearAllFields();
+        else if (mealTotalString.isEmpty()) {
+            ClearAllFields();
         }
-        else
-        {
-            CalculateTip(Double.parseDouble(mealTotalString));
-            alreadyCleared = false;
-        }*/
     }
 
     @Override
@@ -145,6 +114,9 @@ public class MyActivity extends Activity {
 
         tipAmount25percent.setText(String.format("%s", "25%: " + currencyFormatter.format((mealTotal * .25))));
         totalWith25Percent.setText(String.format("%s", "Total: " + currencyFormatter.format((mealTotal *1.25))));
+
+        tipAmount30percent.setText(String.format("%s", "30%: " + currencyFormatter.format((mealTotal * .3))));
+        totalWith30Percent.setText(String.format("%s", "Total: " + currencyFormatter.format((mealTotal *1.3))));
     }
 
     private void GetTextFields()
@@ -152,8 +124,10 @@ public class MyActivity extends Activity {
         tipAmount15percent = (TextView) findViewById(R.id.txt15percenttip);
         tipAmount20percent = (TextView) findViewById(R.id.txt20percenttip);
         tipAmount25percent = (TextView) findViewById(R.id.txt25percenttip);
+        tipAmount30percent = (TextView) findViewById(R.id.txt30percenttip);
         totalWith15Percent = (TextView) findViewById(R.id.txt15percenttotal);
         totalWith20Percent = (TextView) findViewById(R.id.txt20percenttotal);
         totalWith25Percent = (TextView) findViewById(R.id.txt25percenttotal);
+        totalWith30Percent = (TextView) findViewById(R.id.txt30percenttotal);
     }
 }
