@@ -21,7 +21,6 @@ public class MyActivity extends Activity {
     private TextView tipAmount30percent, totalWith30Percent;
     private String savedMealTotalString ="";
     private TextView mealTotalField;
-    private DecimalFormat currencyFormat = new DecimalFormat("0.00");
 
     NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.getDefault());
 
@@ -58,13 +57,13 @@ public class MyActivity extends Activity {
                 }
                 else  {
                     // check if there are more than 2 decimal places, if so,
-                    // disconnect the watcher, delete the extras, reconnect the watcher
+                    // disconnect the watcher, format the text,
+                    // put the cursor at the end and, reconnect the watcher
 
-                    /*mealTotalField.removeTextChangedListener(this);
-                    currencyFormat.format(currentTextAsADouble);
-                    mealTotalField.setText(currentTextAsADouble.toString());
-                    FIGURE OUT HOW TO SET THE CURSOR AT THE END OF THE EDITTEXT WIDGET
-                    mealTotalField.addTextChangedListener(this);*/
+                    if (currentText.startsWith("."))
+                    {
+                        currentText = "0" + currentText;
+                    }
 
                     CalculateTip(Double.parseDouble(currentText));
                 }
