@@ -4,16 +4,13 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
-import android.view.View.OnClickListener;
 
-import java.text.NumberFormat;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Locale;
 
 public class MyActivity extends Activity {
@@ -24,6 +21,7 @@ public class MyActivity extends Activity {
     private TextView tipAmount30percent, totalWith30Percent;
     private String savedMealTotalString ="";
     private TextView mealTotalField;
+    private DecimalFormat currencyFormat = new DecimalFormat("0.00");
 
     NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.getDefault());
 
@@ -33,8 +31,8 @@ public class MyActivity extends Activity {
 
         setContentView(R.layout.activity_my);
 
-        GetTextFields();
-        mealTotalField = (TextView) findViewById(R.id.mealTotalInput);
+        GetLabelTextFields();
+        mealTotalField = (EditText) findViewById(R.id.mealTotalInput);
 
         // TODO
         // stop you putting in three or more decimal places, use Currency Formatter on text field
@@ -52,7 +50,24 @@ public class MyActivity extends Activity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                CheckIfTotalIsEmpty(mealTotalField.getText().toString());
+                String currentText = mealTotalField.getText().toString();
+
+                if (currentText.isEmpty())
+                {
+                    ClearAllLabelFields();
+                }
+                else  {
+                    // check if there are more than 2 decimal places, if so,
+                    // disconnect the watcher, delete the extras, reconnect the watcher
+
+                    /*mealTotalField.removeTextChangedListener(this);
+                    currencyFormat.format(currentTextAsADouble);
+                    mealTotalField.setText(currentTextAsADouble.toString());
+                    FIGURE OUT HOW TO SET THE CURSOR AT THE END OF THE EDITTEXT WIDGET
+                    mealTotalField.addTextChangedListener(this);*/
+
+                    CalculateTip(Double.parseDouble(currentText));
+                }
             }
         });
 
@@ -69,7 +84,7 @@ public class MyActivity extends Activity {
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    private void ClearAllFields() {
+    private void ClearAllLabelFields() {
         tipAmount15percent.setText("15%");
         totalWith15Percent.setText(" ");
         tipAmount20percent.setText("20%");
@@ -81,25 +96,23 @@ public class MyActivity extends Activity {
     }
 
     private void CheckIfTotalIsEmpty(String mealTotalString) {
-        if (!mealTotalString.isEmpty())
+        if (mealTotalString.isEmpty())
         {
-            CalculateTip(Double.parseDouble(mealTotalString));
+            ClearAllLabelFields();
         }
-        else if (mealTotalString.isEmpty()) {
-            ClearAllFields();
+        else  {
+            CalculateTip(Double.parseDouble(mealTotalString));
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.my, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here.
         int id = item.getItemId();
         return id == R.id.action_about || super.onOptionsItemSelected(item);
     }
@@ -119,7 +132,7 @@ public class MyActivity extends Activity {
         totalWith30Percent.setText(String.format("%s", "Total: " + currencyFormatter.format((mealTotal *1.3))));
     }
 
-    private void GetTextFields()
+    private void GetLabelTextFields()
     {
         tipAmount15percent = (TextView) findViewById(R.id.txt15percenttip);
         tipAmount20percent = (TextView) findViewById(R.id.txt20percenttip);
