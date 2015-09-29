@@ -12,6 +12,7 @@
         android:layout_margin="5dp"
         android:hint="@string/total_hint"
         android:inputType="numberDecimal"
+        android:maxLength="6"
         android:includeFontPadding="true" />
     <TableLayout
         android:layout_width="match_parent"
