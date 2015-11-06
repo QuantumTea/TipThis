@@ -1,41 +1,84 @@
 package io.fictional.qa.tipthis;
 
-import android.app.Activity;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spannable;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class MyActivity extends Activity {
+public class MyActivity extends AppCompatActivity {
 
     private TextView tipAmount15percent, totalWith15Percent;
     private TextView tipAmount20percent, totalWith20Percent;
     private TextView tipAmount25percent, totalWith25Percent;
     private TextView tipAmount30percent, totalWith30Percent;
-    private String savedMealTotalString ="";
+    private CheckBox rounded;
     private TextView mealTotalField;
-    private DecimalFormat currencyFormat = new DecimalFormat("0.00");
 
     NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.getDefault());
+    private String format_15pc;
+    private String format_20pc;
+    private String format_25pc;
+    private String format_30pc;
+    private String format_total;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_my);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        format_15pc = getString(R.string.format_15pc);
+        format_20pc = getString(R.string.format_20pc);
+        format_25pc = getString(R.string.format_25pc);
+        format_30pc = getString(R.string.format_30pc);
+        format_total = getString(R.string.format_total);
 
         GetLabelTextFields();
-        mealTotalField = (EditText) findViewById(R.id.mealTotalInput);
 
-        // TODO
-        // stop you putting in three or more decimal places, use Currency Formatter on text field
+        mealTotalField.setFilters(new InputFilter[]{new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                String fieldValue = mealTotalField.getText().toString();
+                if (fieldValue.length() == 0 && ".".equals(source)) {
+                    return "";
+                }
+
+                try {
+                    if (Double.valueOf(fieldValue) > 1000) {
+                        return "";
+                    }
+                } catch(Exception ignored) {}
+
+                int length = fieldValue.length();
+                if (length - dstart > 2 && source.length() > 0 && source.charAt(0) == '.') {
+                    return "";
+                }
+
+                int dot = fieldValue.indexOf('.');
+                if (dot > 0 && length - dot > 2) {
+                    return "";
+                }
+                return null;
+            }
+        }});
 
         mealTotalField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -51,56 +94,46 @@ public class MyActivity extends Activity {
             @Override
             public void afterTextChanged(Editable s) {
                 String currentText = mealTotalField.getText().toString();
-
-                if (currentText.isEmpty())
-                {
-                    ClearAllLabelFields();
-                }
-                else  {
-                    // check if there are more than 2 decimal places, if so,
-                    // disconnect the watcher, delete the extras, reconnect the watcher
-
-                    /*mealTotalField.removeTextChangedListener(this);
-                    currencyFormat.format(currentTextAsADouble);
-                    mealTotalField.setText(currentTextAsADouble.toString());
-                    FIGURE OUT HOW TO SET THE CURSOR AT THE END OF THE EDITTEXT WIDGET
-                    mealTotalField.addTextChangedListener(this);*/
-
-                    CalculateTip(Double.parseDouble(currentText));
-                }
+                CheckIfTotalIsEmpty(currentText);
             }
         });
 
-        // Check if recreating a previously destroyed instance
+        rounded.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String currentText = mealTotalField.getText().toString();
+                CheckIfTotalIsEmpty(currentText);
+            }
+        });
+
         if (savedInstanceState != null) {
-            CheckIfTotalIsEmpty(savedInstanceState.getString(savedMealTotalString));
+            rounded.setChecked(savedInstanceState.getBoolean("rounded"));
+            CheckIfTotalIsEmpty(savedInstanceState.getString("total"));
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        // Save the current state
-        savedInstanceState.putString(savedMealTotalString, mealTotalField.getText().toString());
+        savedInstanceState.putString("total", mealTotalField.getText().toString());
+        savedInstanceState.putBoolean("rounded", rounded.isChecked());
         super.onSaveInstanceState(savedInstanceState);
     }
 
     private void ClearAllLabelFields() {
-        tipAmount15percent.setText("15%");
+        tipAmount15percent.setText(R.string.fifteen_pc);
         totalWith15Percent.setText(" ");
-        tipAmount20percent.setText("20%");
+        tipAmount20percent.setText(R.string.twenty_pc);
         totalWith20Percent.setText(" ");
-        tipAmount25percent.setText("25%");
+        tipAmount25percent.setText(R.string.twenty_five_pc);
         totalWith25Percent.setText(" ");
-        tipAmount30percent.setText("30%");
+        tipAmount30percent.setText(R.string.thirty_pc);
         totalWith30Percent.setText(" ");
     }
 
     private void CheckIfTotalIsEmpty(String mealTotalString) {
-        if (mealTotalString.isEmpty())
-        {
+        if (mealTotalString.isEmpty()){
             ClearAllLabelFields();
-        }
-        else  {
+        } else {
             CalculateTip(Double.parseDouble(mealTotalString));
         }
     }
@@ -119,21 +152,36 @@ public class MyActivity extends Activity {
 
     private void CalculateTip(double mealTotal)
     {
-        tipAmount15percent.setText(String.format("%s", "15%: " + currencyFormatter.format((mealTotal * .15))));
-        totalWith15Percent.setText(String.format("%s", "Total: " + currencyFormatter.format((mealTotal * 1.15))));
+        setColoredLabel(tipAmount15percent, String.format(format_15pc, currencyFormatter.format(mealTotal * .15)), 4, false);
+        setColoredLabel(totalWith15Percent, String.format(format_total, currencyFormatter.format(round(mealTotal * 1.15))), 6, true);
 
-        tipAmount20percent.setText(String.format("%s", "20%: " + currencyFormatter.format((mealTotal * .2))));
-        totalWith20Percent.setText(String.format("%s", "Total: " + currencyFormatter.format((mealTotal *1.2))));
+        setColoredLabel(tipAmount20percent, String.format(format_20pc, currencyFormatter.format(mealTotal * .2)), 4, false);
+        setColoredLabel(totalWith20Percent, String.format(format_total, currencyFormatter.format(round(mealTotal * 1.2))), 6, true);
 
-        tipAmount25percent.setText(String.format("%s", "25%: " + currencyFormatter.format((mealTotal * .25))));
-        totalWith25Percent.setText(String.format("%s", "Total: " + currencyFormatter.format((mealTotal *1.25))));
+        setColoredLabel(tipAmount25percent, String.format(format_25pc, currencyFormatter.format(mealTotal * .25)), 4, false);
+        setColoredLabel(totalWith25Percent, String.format(format_total, currencyFormatter.format(round(mealTotal * 1.25))), 6, true);
 
-        tipAmount30percent.setText(String.format("%s", "30%: " + currencyFormatter.format((mealTotal * .3))));
-        totalWith30Percent.setText(String.format("%s", "Total: " + currencyFormatter.format((mealTotal *1.3))));
+        setColoredLabel(tipAmount30percent, String.format(format_30pc, currencyFormatter.format(mealTotal * .3)), 4, false);
+        setColoredLabel(totalWith30Percent, String.format(format_total, currencyFormatter.format(round(mealTotal * 1.3))), 6, true);
+    }
+
+    private double round(double value) {
+        return rounded.isChecked() ? Math.ceil(value) : value;
+    }
+
+    private void setColoredLabel(TextView tv, String text, int dataStart, boolean bold) {
+        Spannable x = Spannable.Factory.getInstance().newSpannable(text);
+        x.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.primary_text)), 0, dataStart, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        x.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.primary)), dataStart + 1, text.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        if (bold) {
+            x.setSpan(new StyleSpan(Typeface.BOLD), dataStart + 1, text.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        }
+        tv.setText(x);
     }
 
     private void GetLabelTextFields()
     {
+        mealTotalField = (EditText) findViewById(R.id.mealTotalInput);
         tipAmount15percent = (TextView) findViewById(R.id.txt15percenttip);
         tipAmount20percent = (TextView) findViewById(R.id.txt20percenttip);
         tipAmount25percent = (TextView) findViewById(R.id.txt25percenttip);
@@ -142,5 +190,6 @@ public class MyActivity extends Activity {
         totalWith20Percent = (TextView) findViewById(R.id.txt20percenttotal);
         totalWith25Percent = (TextView) findViewById(R.id.txt25percenttotal);
         totalWith30Percent = (TextView) findViewById(R.id.txt30percenttotal);
+        rounded = (CheckBox) findViewById(R.id.round);
     }
 }
