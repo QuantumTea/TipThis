@@ -27,7 +27,6 @@ public class MyActivity extends AppCompatActivity {
     private TextView tipAmount20percent, totalWith20Percent;
     private TextView tipAmount25percent, totalWith25Percent;
     private TextView tipAmount30percent, totalWith30Percent;
-    private CheckBox rounded;
     private TextView mealTotalField;
 
     NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.getDefault());
@@ -98,16 +97,7 @@ public class MyActivity extends AppCompatActivity {
             }
         });
 
-        rounded.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String currentText = mealTotalField.getText().toString();
-                CheckIfTotalIsEmpty(currentText);
-            }
-        });
-
         if (savedInstanceState != null) {
-            rounded.setChecked(savedInstanceState.getBoolean("rounded"));
             CheckIfTotalIsEmpty(savedInstanceState.getString("total"));
         }
     }
@@ -115,7 +105,6 @@ public class MyActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putString("total", mealTotalField.getText().toString());
-        savedInstanceState.putBoolean("rounded", rounded.isChecked());
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -153,20 +142,16 @@ public class MyActivity extends AppCompatActivity {
     private void CalculateTip(double mealTotal)
     {
         setColoredLabel(tipAmount15percent, String.format(format_15pc, currencyFormatter.format(mealTotal * .15)), 4, false);
-        setColoredLabel(totalWith15Percent, String.format(format_total, currencyFormatter.format(round(mealTotal * 1.15))), 6, true);
+        setColoredLabel(totalWith15Percent, String.format(format_total, currencyFormatter.format(mealTotal * 1.15)), 6, true);
 
         setColoredLabel(tipAmount20percent, String.format(format_20pc, currencyFormatter.format(mealTotal * .2)), 4, false);
-        setColoredLabel(totalWith20Percent, String.format(format_total, currencyFormatter.format(round(mealTotal * 1.2))), 6, true);
+        setColoredLabel(totalWith20Percent, String.format(format_total, currencyFormatter.format(mealTotal * 1.2)), 6, true);
 
         setColoredLabel(tipAmount25percent, String.format(format_25pc, currencyFormatter.format(mealTotal * .25)), 4, false);
-        setColoredLabel(totalWith25Percent, String.format(format_total, currencyFormatter.format(round(mealTotal * 1.25))), 6, true);
+        setColoredLabel(totalWith25Percent, String.format(format_total, currencyFormatter.format(mealTotal * 1.25)), 6, true);
 
         setColoredLabel(tipAmount30percent, String.format(format_30pc, currencyFormatter.format(mealTotal * .3)), 4, false);
-        setColoredLabel(totalWith30Percent, String.format(format_total, currencyFormatter.format(round(mealTotal * 1.3))), 6, true);
-    }
-
-    private double round(double value) {
-        return rounded.isChecked() ? Math.ceil(value) : value;
+        setColoredLabel(totalWith30Percent, String.format(format_total, currencyFormatter.format(mealTotal * 1.3)), 6, true);
     }
 
     private void setColoredLabel(TextView tv, String text, int dataStart, boolean bold) {
@@ -190,6 +175,5 @@ public class MyActivity extends AppCompatActivity {
         totalWith20Percent = (TextView) findViewById(R.id.txt20percenttotal);
         totalWith25Percent = (TextView) findViewById(R.id.txt25percenttotal);
         totalWith30Percent = (TextView) findViewById(R.id.txt30percenttotal);
-        rounded = (CheckBox) findViewById(R.id.round);
     }
 }
