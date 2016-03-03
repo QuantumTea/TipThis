@@ -27,7 +27,7 @@ public class MyActivity extends AppCompatActivity {
     private TextView tipAmount20percent, totalWith20Percent;
     private TextView tipAmount25percent, totalWith25Percent;
     private TextView tipAmount30percent, totalWith30Percent;
-    private TextView mealTotalField;
+    private EditText mealTotalField;
 
     NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.getDefault());
     private String format_15pc;
@@ -64,7 +64,8 @@ public class MyActivity extends AppCompatActivity {
                     if (Double.valueOf(fieldValue) > 1000) {
                         return "";
                     }
-                } catch(Exception ignored) {}
+                } catch (Exception ignored) {
+                }
 
                 int length = fieldValue.length();
                 if (length - dstart > 2 && source.length() > 0 && source.charAt(0) == '.') {
@@ -97,6 +98,8 @@ public class MyActivity extends AppCompatActivity {
             }
         });
 
+        mealTotalField.requestFocus();
+
         if (savedInstanceState != null) {
             CheckIfTotalIsEmpty(savedInstanceState.getString("total"));
         }
@@ -120,10 +123,14 @@ public class MyActivity extends AppCompatActivity {
     }
 
     private void CheckIfTotalIsEmpty(String mealTotalString) {
-        if (mealTotalString.isEmpty()){
+        if (mealTotalString.isEmpty()) {
             ClearAllLabelFields();
         } else {
-            CalculateTip(Double.parseDouble(mealTotalString));
+            try {
+                CalculateTip(Double.parseDouble(mealTotalString));
+            } catch (NumberFormatException error) {
+                // drop this on the floor
+            }
         }
     }
 
@@ -139,8 +146,7 @@ public class MyActivity extends AppCompatActivity {
         return id == R.id.action_about || super.onOptionsItemSelected(item);
     }
 
-    private void CalculateTip(double mealTotal)
-    {
+    private void CalculateTip(double mealTotal) {
         setColoredLabel(tipAmount15percent, String.format(format_15pc, currencyFormatter.format(mealTotal * .15)), 4, false);
         setColoredLabel(totalWith15Percent, String.format(format_total, currencyFormatter.format(mealTotal * 1.15)), 6, true);
 
@@ -164,8 +170,7 @@ public class MyActivity extends AppCompatActivity {
         tv.setText(x);
     }
 
-    private void GetLabelTextFields()
-    {
+    private void GetLabelTextFields() {
         mealTotalField = (EditText) findViewById(R.id.mealTotalInput);
         tipAmount15percent = (TextView) findViewById(R.id.txt15percenttip);
         tipAmount20percent = (TextView) findViewById(R.id.txt20percenttip);
