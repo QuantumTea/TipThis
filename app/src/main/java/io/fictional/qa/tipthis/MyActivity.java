@@ -13,8 +13,6 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -41,7 +39,7 @@ public class MyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_my);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         format_15pc = getString(R.string.format_15pc);
@@ -52,32 +50,29 @@ public class MyActivity extends AppCompatActivity {
 
         GetLabelTextFields();
 
-        mealTotalField.setFilters(new InputFilter[]{new InputFilter() {
-            @Override
-            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-                String fieldValue = mealTotalField.getText().toString();
-                if (fieldValue.length() == 0 && ".".equals(source)) {
-                    return "";
-                }
-
-                try {
-                    if (Double.valueOf(fieldValue) > 1000) {
-                        return "";
-                    }
-                } catch (Exception ignored) {
-                }
-
-                int length = fieldValue.length();
-                if (length - dstart > 2 && source.length() > 0 && source.charAt(0) == '.') {
-                    return "";
-                }
-
-                int dot = fieldValue.indexOf('.');
-                if (dot > 0 && length - dot > 2) {
-                    return "";
-                }
-                return null;
+        mealTotalField.setFilters(new InputFilter[]{(source, start, end, dest, dstart, dend) -> {
+            String fieldValue = mealTotalField.getText().toString();
+            if (fieldValue.isEmpty() && ".".contentEquals(source)) {
+                return "";
             }
+
+            try {
+                if (Double.parseDouble(fieldValue) > 1000) {
+                    return "";
+                }
+            } catch (Exception ignored) {
+            }
+
+            int length = fieldValue.length();
+            if (length - dstart > 2 && source.length() > 0 && source.charAt(0) == '.') {
+                return "";
+            }
+
+            int dot = fieldValue.indexOf('.');
+            if (dot > 0 && length - dot > 2) {
+                return "";
+            }
+            return null;
         }});
 
         mealTotalField.addTextChangedListener(new TextWatcher() {
@@ -162,8 +157,8 @@ public class MyActivity extends AppCompatActivity {
 
     private void setColoredLabel(TextView tv, String text, int dataStart, boolean bold) {
         Spannable x = Spannable.Factory.getInstance().newSpannable(text);
-        x.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.primary_text)), 0, dataStart, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        x.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.primary)), dataStart + 1, text.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        x.setSpan(new ForegroundColorSpan(getColor(R.color.primary_text)), 0, dataStart, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        x.setSpan(new ForegroundColorSpan(getColor(R.color.primary)), dataStart + 1, text.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         if (bold) {
             x.setSpan(new StyleSpan(Typeface.BOLD), dataStart + 1, text.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
@@ -171,14 +166,14 @@ public class MyActivity extends AppCompatActivity {
     }
 
     private void GetLabelTextFields() {
-        mealTotalField = (EditText) findViewById(R.id.mealTotalInput);
-        tipAmount15percent = (TextView) findViewById(R.id.txt15percenttip);
-        tipAmount20percent = (TextView) findViewById(R.id.txt20percenttip);
-        tipAmount25percent = (TextView) findViewById(R.id.txt25percenttip);
-        tipAmount30percent = (TextView) findViewById(R.id.txt30percenttip);
-        totalWith15Percent = (TextView) findViewById(R.id.txt15percenttotal);
-        totalWith20Percent = (TextView) findViewById(R.id.txt20percenttotal);
-        totalWith25Percent = (TextView) findViewById(R.id.txt25percenttotal);
-        totalWith30Percent = (TextView) findViewById(R.id.txt30percenttotal);
+        mealTotalField = findViewById(R.id.mealTotalInput);
+        tipAmount15percent = findViewById(R.id.txt15percenttip);
+        tipAmount20percent = findViewById(R.id.txt20percenttip);
+        tipAmount25percent = findViewById(R.id.txt25percenttip);
+        tipAmount30percent = findViewById(R.id.txt30percenttip);
+        totalWith15Percent = findViewById(R.id.txt15percenttotal);
+        totalWith20Percent = findViewById(R.id.txt20percenttotal);
+        totalWith25Percent = findViewById(R.id.txt25percenttotal);
+        totalWith30Percent = findViewById(R.id.txt30percenttotal);
     }
 }
